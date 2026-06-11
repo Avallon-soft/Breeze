@@ -1,5 +1,10 @@
 # Breeze
 
+## Fonctionnement du backend
+
+App.js -> routes -> controller -> service -> (repository) -> model
+
+
 ## Matrice des permissions
 
 | Fonctionnalité (Fx) | Visiteur | Utilisateur | Modérateur | Administrateur |

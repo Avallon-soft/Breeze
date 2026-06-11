@@ -1,0 +1,9 @@
+﻿name: workflow.yml
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  #The best to come
