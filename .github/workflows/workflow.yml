@@ -30,4 +30,12 @@ jobs:
           context: ./frontend
           file: ./frontend/Dockerfile
           push: true
-          tags: ${{ vars.DOCKER_TAGS }}
+          tags: ${{ vars.DOCKER_FRONTEND_TAGS }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ./auth-service
+          file: ./auth-service/Dockerfile
+          push: true
+          tags: ${{ vars.DOCKER_AUTH_BACKEND_TAGS }}
