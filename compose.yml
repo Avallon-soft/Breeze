@@ -1,0 +1,118 @@
+﻿services:
+
+  # Postgresql DB
+
+  auth-postgres:
+    container_name: postgres
+    image: postgres:17-alpine
+    environment:
+      - POSTGRES_DB=authdb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./auth-service/asset/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - auth-network
+
+  pgadmin4:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    ports:
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: breeze@breeze.com
+      PGADMIN_DEFAULT_PASSWORD: strong-password
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - auth-network
+
+  # BACKEND Auth service
+
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    environment:
+      #API listen on port 3000
+      API_PORT: 3000
+      NODE_ENV: dev
+      # JWT
+      SALT_ROUNDS: 12
+      JWT_SECRET: oeL0xvKleZvALGWVwMWadS00Us47Rh3GH8EC6dfbW5w=
+      JWT_EXPIRES_IN: 1h
+      # Database
+      DB_HOST: auth-postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: authdb
+    depends_on:
+      - auth-postgres
+    networks:
+      - auth-network
+
+  # ------------------ Mongo DB ------------------
+
+  mongo-db:
+    image: mongo:latest
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongodb
+      MONGO_INITDB_ROOT_PASSWORD: mongodb
+      MONGO_INITDB_DATABASE: softwaredb
+    volumes:
+      - mongodb:/data/db
+    networks:
+      - software-network
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongodb:mongodb@mongo-db:27017/
+      ME_CONFIG_BASICAUTH_ENABLED: true
+      ME_CONFIG_BASICAUTH_USERNAME: mongoexpressuser
+      ME_CONFIG_BASICAUTH_PASSWORD: mongoexpresspass
+    depends_on:
+      - mongo-db
+    networks:
+      - software-network
+
+
+  # BACKEND Software service
+
+  # Frontend
+
+  # Nginx
+
+  nginx:
+    image: nginx:1.29.1-alpine
+    container_name: gateway
+    volumes:
+      - ./gateway/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "8080:80"
+    networks:
+      - auth-network
+      - software-network
+    depends_on:
+      - auth-service
+
+networks:
+  auth-network:
+    driver: bridge
+  software-network:
+    driver: bridge
+
+volumes:
+  db-data:
+    name: postgres-db-data
+  pgadmin-data:
+    name: postgres-pgadmin-data
+  mongodb:
+    name: mongodb-db-data
