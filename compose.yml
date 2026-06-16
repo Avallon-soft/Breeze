@@ -8,7 +8,7 @@
     environment:
       - POSTGRES_DB=authdb
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
       - db-data:/var/lib/postgresql/data
       - ./auth-service/asset/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -23,7 +23,7 @@
       - "8888:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: breeze@breeze.com
-      PGADMIN_DEFAULT_PASSWORD: strong-password
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     volumes:
       - pgadmin-data:/var/lib/pgadmin
     networks:
@@ -32,22 +32,20 @@
   # BACKEND Auth service
 
   auth-service:
-    build:
-      context: ./auth-service
-      dockerfile: Dockerfile
+    image: matthif/breeze-auth-backend:latest
     environment:
       #API listen on port 3000
       API_PORT: 3000
       NODE_ENV: dev
       # JWT
       SALT_ROUNDS: 12
-      JWT_SECRET: oeL0xvKleZvALGWVwMWadS00Us47Rh3GH8EC6dfbW5w=
+      JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRES_IN: 1h
       # Database
       DB_HOST: auth-postgres
       DB_PORT: 5432
       DB_USER: postgres
-      DB_PASSWORD: postgres
+      DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: authdb
     depends_on:
       - auth-postgres
@@ -61,7 +59,7 @@
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: mongodb
-      MONGO_INITDB_ROOT_PASSWORD: mongodb
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
       MONGO_INITDB_DATABASE: softwaredb
     volumes:
       - mongodb:/data/db
@@ -74,17 +72,24 @@
     ports:
       - "8081:8081"
     environment:
-      ME_CONFIG_MONGODB_URL: mongodb://mongodb:mongodb@mongo-db:27017/
+      ME_CONFIG_MONGODB_URL: ${ME_CONFIG_MONGODB_URL}
       ME_CONFIG_BASICAUTH_ENABLED: true
       ME_CONFIG_BASICAUTH_USERNAME: mongoexpressuser
-      ME_CONFIG_BASICAUTH_PASSWORD: mongoexpresspass
+      ME_CONFIG_BASICAUTH_PASSWORD: ${ME_CONFIG_BASICAUTH_PASSWORD}
     depends_on:
       - mongo-db
     networks:
       - software-network
 
-
   # BACKEND Software service
+
+  software-service:
+    image: matthif/breeze-auth-backend:latest
+    env_file: '.env'
+    depends_on:
+      - auth-postgres
+    networks:
+      - software-network
 
   # Frontend
 
