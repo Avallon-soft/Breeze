@@ -40,7 +40,7 @@ async function login(email, password) {
     if (!isValid) throw new Error("Invalid credentials");
 
     const token = generateToken({
-        id: user.id,
+        uuid: user.uuid,
         email: user.email,
         role: user.role,
     });
