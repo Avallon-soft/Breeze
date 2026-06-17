@@ -34,8 +34,13 @@ function validate(req, res) {
 
 }
 
+function logout(req, res) {
+    return res.status(200).json({ message: "Logged out successfully" });
+}
+
 module.exports = {
     validate,
     register,
     login,
+    logout,
 };
