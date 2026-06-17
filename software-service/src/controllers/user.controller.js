@@ -1,18 +1,13 @@
-const UserModel = require("../models/user.model");
+const UserService = require("../services/user.service");
 
 async function getUserById(req, res) {
     try {
         const { id } = req.params;
-
-        const user = await UserModel.findById(id).select("-__v");
-
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
+        const user = await UserService.getUserById(id);
         res.status(200).json(user);
     } catch (err) {
-        res.status(400).json({ message: err.message });
+        const status = err.message === "User not found" ? 404 : 400;
+        res.status(status).json({ message: err.message });
     }
 }
 
@@ -25,19 +20,11 @@ async function updateUser(req, res) {
             return res.status(403).json({ message: "Forbidden" });
         }
 
-        const user = await UserModel.findByIdAndUpdate(
-            id,
-            { user_name, user_email },
-            { new: true, runValidators: true }
-        ).select("-__v");
-
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
+        const user = await UserService.updateUser(id, { user_name, user_email });
         res.status(200).json(user);
     } catch (err) {
-        res.status(400).json({ message: err.message });
+        const status = err.message === "User not found" ? 404 : 400;
+        res.status(status).json({ message: err.message });
     }
 }
 
@@ -49,15 +36,11 @@ async function deleteUser(req, res) {
             return res.status(403).json({ message: "Forbidden" });
         }
 
-        const user = await UserModel.findByIdAndDelete(id);
-
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
+        await UserService.deleteUser(id);
         res.status(200).json({ message: "User deleted" });
     } catch (err) {
-        res.status(400).json({ message: err.message });
+        const status = err.message === "User not found" ? 404 : 400;
+        res.status(status).json({ message: err.message });
     }
 }
 
@@ -70,19 +53,11 @@ async function updateUserProfile(req, res) {
             return res.status(403).json({ message: "Forbidden" });
         }
 
-        const user = await UserModel.findByIdAndUpdate(
-            userId,
-            { user_bio, user_avatar_url, id_language, id_type },
-            { new: true, runValidators: true }
-        ).select("-__v");
-
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
+        const user = await UserService.updateUserProfile(userId, { user_bio, user_avatar_url, id_language, id_type });
         res.status(200).json(user);
     } catch (err) {
-        res.status(400).json({ message: err.message });
+        const status = err.message === "User not found" ? 404 : 400;
+        res.status(status).json({ message: err.message });
     }
 }
 
