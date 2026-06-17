@@ -1,4 +1,5 @@
 ﻿require("dotenv").config();
+let crypto = require("crypto");
 
 const sequelize = require("../../config/database.config");
 const User = require("../user.model");
@@ -20,13 +21,18 @@ async function runSeed() {
         await sequelize.sync();
         console.log("Models synchronized");
 
+        const uuid1 = crypto.randomUUID()
+        const uuid2 = crypto.randomUUID()
+
         const users = [
             {
+                uuid: uuid1,
                 email: "admin@example.com",
                 password: "Password123!",
                 role: "admin",
             },
             {
+                uuid: uuid2,
                 email: "user@example.com",
                 password: "Password123!",
                 role: "user",
@@ -50,6 +56,7 @@ async function runSeed() {
 
             // Create the new user in the database
             await User.create({
+                uuid: u.uuid,
                 email: u.email,
                 passwordHash: passwordHash,
                 role: u.role,

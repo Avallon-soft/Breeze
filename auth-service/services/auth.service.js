@@ -1,4 +1,5 @@
-﻿const { hashPassword, comparePassword } = require("../utils/bcrypt.util");
+﻿const crypto = require('crypto');
+const { hashPassword, comparePassword } = require("../utils/bcrypt.util");
 const { generateToken } = require("../utils/jwt.util");
 const User = require("../models/user.model");
 
@@ -10,15 +11,20 @@ async function register(email, password) {
 
     if (existingUser) throw new Error("User already exists");
 
+    const uuid = crypto.randomUUID()
+
     const passwordHash = await hashPassword(password);
 
     const newUser = await User.create({
+        uuid,
         email,
         passwordHash,
         role: "user",
     });
 
-    return { email: newUser.email, role: newUser.role };
+    const token = await this.login(email, password);
+
+    return { uuid: uuid, token: token.token };
 }
 
 async function login(email, password) {

@@ -1,5 +1,5 @@
 ﻿CREATE TABLE IF NOT EXISTS "users" (
-    "id"           SERIAL PRIMARY KEY,
+    "uuid"         VARCHAR(50) PRIMARY KEY,
     "email"        VARCHAR(255) NOT NULL UNIQUE,
     "passwordHash" VARCHAR(255) NOT NULL,
     "role"         VARCHAR(50)  NOT NULL DEFAULT 'user',
