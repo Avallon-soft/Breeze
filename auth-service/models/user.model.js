@@ -2,9 +2,8 @@
 const sequelize = require("../config/database.config");
 
 const UserModel = sequelize.define("User", {
-    id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
+    uuid: {
+        type: DataTypes.STRING,
         primaryKey: true,
     },
     email: {
