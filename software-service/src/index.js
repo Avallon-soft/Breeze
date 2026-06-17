@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 const express = require("express");
-const mongoose = require("mongoose");
+const sequelize = require("./config/database.config");
 
 const userRoutes = require("./routes/user.route");
 
@@ -21,15 +21,14 @@ app.get("/api/health", (req, res) => {
     res.status(200).json({ status: "UP" });
 });
 
-mongoose
-    .connect(process.env.MONGO_URI || "mongodb://localhost:27017/softwaredb")
+sequelize.sync()
     .then(() => {
         app.listen(port, () => {
             console.log(`Server listening on port ${port}`);
         });
     })
     .catch((err) => {
-        console.error("MongoDB connection error:", err);
+        console.error("Database connection error:", err);
         process.exit(1);
     });
 
