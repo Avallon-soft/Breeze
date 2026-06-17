@@ -1,14 +1,14 @@
-﻿const express = require("express");
-
+const express = require("express");
 const router = express.Router();
 
-const AuthController = require("../controllers/post.controller");
-const {authenticate} = require("../middleware/post.middleware");
+const PostController = require("../controllers/post.controller");
 
-router.post("/register",  AuthController.register);
-
-router.post("/login",  AuthController.login);
-
-router.get("/validate", authenticate, AuthController.validate);
+router.post("/", PostController.createPost);
+router.get("/", PostController.getAllPosts);
+router.get("/:id", PostController.getPostById);
+router.put("/:id", PostController.updatePost);
+router.delete("/:id", PostController.deletePost);
+router.get("/:postId/comments", PostController.getPostComments);
+router.get("/:postId/likes", PostController.getPostLikes);
 
 module.exports = router;
