@@ -1,6 +1,7 @@
 ﻿const { hashPassword, comparePassword } = require("../utils/bcrypt.util");
 const { generateToken } = require("../utils/jwt.util");
 const User = require("../models/user.model");
+const tokenStore = require("../utils/token-store.util");
 
 async function register(email, password) {
 
@@ -39,10 +40,17 @@ async function login(email, password) {
         role: user.role,
     });
 
+    tokenStore.set(token, true);
+
     return { token };
+}
+
+function logout(token) {
+    tokenStore.set(token, false);
 }
 
 module.exports = {
     register,
     login,
+    logout,
 };
