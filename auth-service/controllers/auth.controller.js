@@ -35,6 +35,7 @@ function validate(req, res) {
 }
 
 function logout(req, res) {
+    AuthService.logout(req.token);
     return res.status(200).json({ message: "Logged out successfully" });
 }
 
