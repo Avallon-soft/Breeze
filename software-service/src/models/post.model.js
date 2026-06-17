@@ -1,30 +1,23 @@
 ﻿const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database.config");
 
-const PostModel = sequelize.define("User", {
-    id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-    },
-    email: {
-        type: DataTypes.STRING,
-        unique: true,
-        allowNull: false,
-        validate: { isEmail: true },
-    },
-    passwordHash: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    role: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        defaultValue: "user",
-    },
+const Post = sequelize.define("Post", {
+  post_id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true
+  },
+  post_content: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
+  user_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  }
 }, {
-    tableName: "users",
-    timestamps: true,
+  tableName: "posts",
+  timestamps: true
 });
 
-module.exports = PostModel;
+module.exports = Post;
