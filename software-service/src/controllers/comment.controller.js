@@ -3,9 +3,9 @@ const CommentService = require("../services/comment.service");
 async function createComment(req, res) {
   try {
     const postId = req.query.breeze_id;
-    const { content, user_id } = req.body;
+    const { content } = req.body;
 
-    const comment = await CommentService.createComment(postId, content, user_id);
+    const comment = await CommentService.createComment(postId, content, req.user.uuid);
 
     res.status(201).json(comment);
   } catch (err) {
@@ -24,13 +24,13 @@ async function deleteComment(req, res) {
 
 async function createReply(req, res) {
   try {
-    const { content, user_id, post_id } = req.body;
+    const { content, post_id } = req.body;
 
     const reply = await CommentService.createReply(
       req.params.commentId,
       post_id,
       content,
-      user_id
+      req.user.uuid
     );
 
     res.status(201).json(reply);
@@ -59,11 +59,9 @@ async function deleteReplies(req, res) {
 
 async function likeComment(req, res) {
   try {
-    const { user_id } = req.body;
-
     const like = await CommentService.likeComment(
       req.params.commentId,
-      user_id
+      req.user.uuid
     );
 
     res.status(201).json(like);

@@ -3,9 +3,8 @@ const FollowService = require("../services/follow.service");
 async function followUser(req, res) {
   try {
     const followingId = req.query.user_id;
-    const { follower_id } = req.body;
 
-    const follow = await FollowService.followUser(follower_id, followingId);
+    const follow = await FollowService.followUser(req.user.uuid, followingId);
 
     res.status(201).json(follow);
   } catch (err) {

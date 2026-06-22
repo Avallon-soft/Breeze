@@ -2,8 +2,8 @@ const PostService = require("../services/post.service");
 
 async function createPost(req, res) {
   try {
-    const { content, user_id } = req.body;
-    const post = await PostService.createPost(content, user_id);
+    const { content } = req.body;
+    const post = await PostService.createPost(content, req.user.uuid);
     res.status(201).json(post);
   } catch (err) {
     res.status(400).json({ message: err.message });
