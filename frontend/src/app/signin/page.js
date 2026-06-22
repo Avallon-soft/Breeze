@@ -1,26 +1,31 @@
+"use client"
+
 import { Wind, User, Lock, Eye } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import { useState } from "react";
 
 export default function SignIn() {
-    // const router = useRouter();
+    const router = useRouter();
 
-    // const { login, error } = useAuth();
+    const { login, error } = useAuth();
 
-    // const [username, setUsername] = useState("mor_2314");
-    // const [password, setPassword] = useState("83r5^_");
+    const [username, setUsername] = useState("mor_2314");
+    const [password, setPassword] = useState("83r5^_");
 
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-    //     const success = await login(
-    //         username,
-    //         password
-    //     );
+        const success = await login(
+            username,
+            password
+        );
 
-    //     if (success) {
-    //         router.push("/profil");
-    //     }
-    // }
+        if (success) {
+            router.push("/profil");
+        }
+    }
     return (
         <div className="min-h-screen bg-[#f8f8f5] p-6">
             <div className="max-w-7xl mx-auto bg-white rounded-[32px] overflow-hidden shadow-sm border border-[#efefea] min-h-[90vh] grid lg:grid-cols-2">
@@ -31,7 +36,8 @@ export default function SignIn() {
                         <span className="font-bold text-4xl">Breeze</span>
                     </div>
 
-                    <form className="max-w">
+                    <form className="max-w" onSubmit={handleSubmit}>
+
                         <h1 className="text-6xl font-bold tracking-tight text-black">
                             Connexion
                         </h1>
@@ -48,8 +54,11 @@ export default function SignIn() {
 
                                 <div className="h-14 rounded-2xl border border-gray-200 flex items-center px-4">
                                     <User size={18} className="text-gray-400" />
-
                                     <input
+                                        value={username}
+                                        onChange={(e) =>
+                                            setUsername(e.target.value)
+                                        }
                                         placeholder="Votre nom d'utilisateur"
                                         className="flex-1 ml-3 outline-none bg-transparent"
                                     />
@@ -66,6 +75,10 @@ export default function SignIn() {
 
                                     <input
                                         type="password"
+                                        value={password}
+                                        onChange={(e) =>
+                                            setPassword(e.target.value)
+                                        }
                                         placeholder="Votre mot de passe"
                                         className="flex-1 ml-3 outline-none bg-transparent"
                                     />
