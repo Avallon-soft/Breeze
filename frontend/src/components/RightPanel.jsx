@@ -72,7 +72,7 @@ export default function RightPanel({ user }) {
         <p className="text-xs text-gray-300">
           Aide · Confidentialité · Conditions d'utilisation
         </p>
-        <p className="text-xs text-gray-200 mt-1">© 2024 Breeze</p>
+        <p className="text-xs text-gray-200 mt-1">© 2026 Breeze</p>
       </div>
     </aside>
   );
