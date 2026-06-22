@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-// import { loginUser } from "@/utils/api";
+import { loginUser } from "@/utils/api"; 
 
 const AuthContext = createContext(null);
 
