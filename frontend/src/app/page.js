@@ -1,6 +1,5 @@
 import Sidebar from "@/components/Sidebar";
 import CreatePost from "@/components/CreatePost";
-// import DansLAir from "@/components/DansLAir";  
 import PostCard from "@/components/PostCard";
 import RightPanel from "@/components/RightPanel";
 import { currentUser, posts } from "@/lib/data";
