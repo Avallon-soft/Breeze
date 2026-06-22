@@ -1,18 +1,24 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/database.config");
+const mongoose = require("mongoose");
 
-const Follow = sequelize.define("Follow", {
-  follower_id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true
+const followSchema = new mongoose.Schema(
+  {
+    follower_id: {
+      type: String,
+      required: true,
+      index: true,
+    },
+    following_id: {
+      type: String,
+      required: true,
+      index: true,
+    },
   },
-  following_id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true
+  {
+    collection: "follows",
+    timestamps: true,
   }
-}, {
-  tableName: "follows",
-  timestamps: true
-});
+);
 
-module.exports = Follow;
+followSchema.index({ follower_id: 1, following_id: 1 }, { unique: true });
+
+module.exports = mongoose.model("Follow", followSchema);

@@ -1,17 +1,15 @@
-require("dotenv").config();
+const path = require("path");
+const mongoose = require("mongoose");
 
-const { Sequelize } = require("sequelize");
+require("dotenv").config({ path: path.resolve(__dirname, "../../../.env") });
 
-const sequelize = new Sequelize(
-    process.env.DB_NAME || "breeze",
-    process.env.DB_USER || "postgres",
-    process.env.DB_PASSWORD || "enzo",
-    {
-        host: process.env.DB_HOST || "localhost",
-        port: process.env.DB_PORT || 5432,
-        dialect: "postgres",
-        logging: false,
-    }
-);
+const mongoUri = process.env.SOFTWARE_MONGO_URI || "mongodb://127.0.0.1:27017/breeze";
 
-module.exports = sequelize;
+async function connectDatabase() {
+  await mongoose.connect(mongoUri);
+}
+
+module.exports = {
+  connectDatabase,
+  mongoose,
+};

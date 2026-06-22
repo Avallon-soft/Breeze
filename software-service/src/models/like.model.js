@@ -1,27 +1,45 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/database.config");
+const { randomUUID } = require("crypto");
+const mongoose = require("mongoose");
 
-const Like = sequelize.define("Like", {
-  like_id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true
+const likeSchema = new mongoose.Schema(
+  {
+    like_id: {
+      type: String,
+      default: randomUUID,
+      unique: true,
+      index: true,
+      required: true,
+    },
+    user_id: {
+      type: String,
+      required: true,
+      index: true,
+    },
+    post_id: {
+      type: String,
+      default: null,
+      index: true,
+    },
+    comment_id: {
+      type: String,
+      default: null,
+      index: true,
+    },
   },
-  user_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
-  post_id: {
-    type: DataTypes.INTEGER,
-    allowNull: true
-  },
-  comment_id: {
-    type: DataTypes.INTEGER,
-    allowNull: true
+  {
+    collection: "likes",
+    timestamps: true,
   }
-}, {
-  tableName: "likes",
-  timestamps: true
-});
+);
 
-module.exports = Like;
+likeSchema.index(
+  { user_id: 1, post_id: 1 },
+  { unique: true, partialFilterExpression: { post_id: { $type: "string" } } }
+);
+
+likeSchema.index(
+  { user_id: 1, comment_id: 1 },
+  { unique: true, partialFilterExpression: { comment_id: { $type: "string" } } }
+);
+
+module.exports = mongoose.model("Like", likeSchema);

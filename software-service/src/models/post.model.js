@@ -1,23 +1,29 @@
-﻿const { DataTypes } = require("sequelize");
-const sequelize = require("../config/database.config");
+const { randomUUID } = require("crypto");
+const mongoose = require("mongoose");
 
-const Post = sequelize.define("Post", {
-  post_id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true
+const postSchema = new mongoose.Schema(
+  {
+    post_id: {
+      type: String,
+      default: randomUUID,
+      unique: true,
+      index: true,
+      required: true,
+    },
+    post_content: {
+      type: String,
+      required: true,
+    },
+    user_id: {
+      type: String,
+      required: true,
+      index: true,
+    },
   },
-  post_content: {
-    type: DataTypes.TEXT,
-    allowNull: false
-  },
-  user_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false
+  {
+    collection: "posts",
+    timestamps: true,
   }
-}, {
-  tableName: "posts",
-  timestamps: true
-});
+);
 
-module.exports = Post;
+module.exports = mongoose.model("Post", postSchema);

@@ -9,15 +9,13 @@ async function followUser(followerId, followingId) {
     throw new Error("Following id is required");
   }
 
-  if (Number(followerId) === Number(followingId)) {
+  if (followerId === followingId) {
     throw new Error("You cannot follow yourself");
   }
 
   const existing = await Follow.findOne({
-    where: {
-      follower_id: followerId,
-      following_id: followingId
-    }
+    follower_id: followerId,
+    following_id: followingId,
   });
 
   if (existing) {
@@ -26,10 +24,10 @@ async function followUser(followerId, followingId) {
 
   return await Follow.create({
     follower_id: followerId,
-    following_id: followingId
+    following_id: followingId,
   });
 }
 
 module.exports = {
-  followUser
+  followUser,
 };

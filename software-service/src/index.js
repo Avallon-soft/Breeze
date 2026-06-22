@@ -1,7 +1,8 @@
 const express = require("express");
 require("dotenv").config();
 
-const { sequelize } = require("./models");
+const { connectDatabase } = require("./models");
+const { authenticate } = require("./middleware/auth.middleware");
 
 const postRoutes = require("./routes/post.route");
 const commentRoutes = require("./routes/comment.route");
@@ -21,6 +22,8 @@ app.get("/api/health", (req, res) => {
   res.status(200).json({ status: "UP" });
 });
 
+app.use(authenticate);
+
 app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/like", likeRoutes);
@@ -31,11 +34,8 @@ app.use("/api/me", meRoutes);
 
 async function startServer() {
   try {
-    await sequelize.authenticate();
-    console.log("Software database connected");
-
-    await sequelize.sync({ alter: true });
-    console.log("Software models synchronized");
+    await connectDatabase();
+    console.log("Software Mongo database connected");
 
     app.listen(port, () => {
       console.log(`Software service running on port ${port}`);

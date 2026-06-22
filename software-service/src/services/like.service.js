@@ -10,10 +10,8 @@ async function likePost(postId, userId) {
   }
 
   const existing = await Like.findOne({
-    where: {
-      post_id: postId,
-      user_id: userId
-    }
+    post_id: postId,
+    user_id: userId,
   });
 
   if (existing) {
@@ -23,10 +21,10 @@ async function likePost(postId, userId) {
   return await Like.create({
     post_id: postId,
     user_id: userId,
-    comment_id: null
+    comment_id: null,
   });
 }
 
 module.exports = {
-  likePost
+  likePost,
 };

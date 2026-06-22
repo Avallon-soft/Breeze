@@ -11,18 +11,16 @@ async function createPost(content, userId) {
 
   return await Post.create({
     post_content: content,
-    user_id: userId
+    user_id: userId,
   });
 }
 
 async function getAllPosts() {
-  return await Post.findAll({
-    order: [["createdAt", "DESC"]]
-  });
+  return await Post.find().sort({ createdAt: -1 });
 }
 
 async function getPostById(id) {
-  const post = await Post.findByPk(id);
+  const post = await Post.findOne({ post_id: id });
 
   if (!post) {
     throw new Error("Post not found");
@@ -32,38 +30,44 @@ async function getPostById(id) {
 }
 
 async function updatePost(id, content) {
-  const post = await getPostById(id);
-
   if (!content || content.trim() === "") {
     throw new Error("Post content is required");
   }
 
-  post.post_content = content;
-  await post.save();
+  const post = await Post.findOneAndUpdate(
+    { post_id: id },
+    { post_content: content },
+    { new: true }
+  );
+
+  if (!post) {
+    throw new Error("Post not found");
+  }
 
   return post;
 }
 
 async function deletePost(id) {
-  const post = await getPostById(id);
-  await post.destroy();
+  const post = await Post.findOneAndDelete({ post_id: id });
+
+  if (!post) {
+    throw new Error("Post not found");
+  }
+
+  await Comment.deleteMany({ post_id: id });
+  await Like.deleteMany({ post_id: id });
 }
 
 async function getPostComments(postId) {
-  return await Comment.findAll({
-    where: {
-      post_id: postId,
-      parent_comment_id: null
-    },
-    order: [["createdAt", "ASC"]]
-  });
+  return await Comment.find({
+    post_id: postId,
+    parent_comment_id: null,
+  }).sort({ createdAt: 1 });
 }
 
 async function getPostLikes(postId) {
-  return await Like.findAll({
-    where: {
-      post_id: postId
-    }
+  return await Like.find({
+    post_id: postId,
   });
 }
 
@@ -74,5 +78,5 @@ module.exports = {
   updatePost,
   deletePost,
   getPostComments,
-  getPostLikes
+  getPostLikes,
 };

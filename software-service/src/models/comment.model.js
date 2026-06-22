@@ -1,31 +1,39 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/database.config");
+const { randomUUID } = require("crypto");
+const mongoose = require("mongoose");
 
-const Comment = sequelize.define("Comment", {
-  comment_id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true
+const commentSchema = new mongoose.Schema(
+  {
+    comment_id: {
+      type: String,
+      default: randomUUID,
+      unique: true,
+      index: true,
+      required: true,
+    },
+    comment_content: {
+      type: String,
+      required: true,
+    },
+    user_id: {
+      type: String,
+      required: true,
+      index: true,
+    },
+    post_id: {
+      type: String,
+      required: true,
+      index: true,
+    },
+    parent_comment_id: {
+      type: String,
+      default: null,
+      index: true,
+    },
   },
-  comment_content: {
-    type: DataTypes.TEXT,
-    allowNull: false
-  },
-  user_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
-  post_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
-  parent_comment_id: {
-    type: DataTypes.INTEGER,
-    allowNull: true
+  {
+    collection: "comments",
+    timestamps: true,
   }
-}, {
-  tableName: "comments",
-  timestamps: true
-});
+);
 
-module.exports = Comment;
+module.exports = mongoose.model("Comment", commentSchema);

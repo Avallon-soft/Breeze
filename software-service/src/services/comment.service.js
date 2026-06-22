@@ -17,18 +17,19 @@ async function createComment(postId, content, userId) {
     comment_content: content,
     post_id: postId,
     user_id: userId,
-    parent_comment_id: null
+    parent_comment_id: null,
   });
 }
 
 async function deleteComment(commentId) {
-  const comment = await Comment.findByPk(commentId);
+  const comment = await Comment.findOneAndDelete({ comment_id: commentId });
 
   if (!comment) {
     throw new Error("Comment not found");
   }
 
-  await comment.destroy();
+  await Comment.deleteMany({ parent_comment_id: commentId });
+  await Like.deleteMany({ comment_id: commentId });
 }
 
 async function createReply(parentCommentId, postId, content, userId) {
@@ -52,24 +53,19 @@ async function createReply(parentCommentId, postId, content, userId) {
     comment_content: content,
     post_id: postId,
     user_id: userId,
-    parent_comment_id: parentCommentId
+    parent_comment_id: parentCommentId,
   });
 }
 
 async function getReplies(commentId) {
-  return await Comment.findAll({
-    where: {
-      parent_comment_id: commentId
-    },
-    order: [["createdAt", "ASC"]]
-  });
+  return await Comment.find({
+    parent_comment_id: commentId,
+  }).sort({ createdAt: 1 });
 }
 
 async function deleteReplies(commentId) {
-  await Comment.destroy({
-    where: {
-      parent_comment_id: commentId
-    }
+  await Comment.deleteMany({
+    parent_comment_id: commentId,
   });
 }
 
@@ -79,10 +75,8 @@ async function likeComment(commentId, userId) {
   }
 
   const existing = await Like.findOne({
-    where: {
-      comment_id: commentId,
-      user_id: userId
-    }
+    comment_id: commentId,
+    user_id: userId,
   });
 
   if (existing) {
@@ -92,15 +86,13 @@ async function likeComment(commentId, userId) {
   return await Like.create({
     comment_id: commentId,
     user_id: userId,
-    post_id: null
+    post_id: null,
   });
 }
 
 async function getCommentLikes(commentId) {
-  return await Like.findAll({
-    where: {
-      comment_id: commentId
-    }
+  return await Like.find({
+    comment_id: commentId,
   });
 }
 
@@ -111,5 +103,5 @@ module.exports = {
   getReplies,
   deleteReplies,
   likeComment,
-  getCommentLikes
+  getCommentLikes,
 };
