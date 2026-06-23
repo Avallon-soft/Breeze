@@ -115,6 +115,22 @@ services:
     depends_on:
       - auth-service
 
+  # Swagger UI
+  swagger-ui:
+    image: swaggerapi/swagger-ui:latest
+    container_name: swagger_ui
+    volumes:
+      - ./openapi.yaml:/usr/share/nginx/html/openapi.yaml:ro
+    environment:
+      - SWAGGER_JSON=/openapi.yaml
+    ports:
+      - "8082:8080"
+    networks:
+      - auth-network
+      - software-network
+    depends_on:
+      - auth-service
+
 networks:
   auth-network:
     driver: bridge
