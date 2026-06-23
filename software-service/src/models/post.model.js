@@ -1,30 +1,51 @@
-﻿const { DataTypes } = require("sequelize");
-const sequelize = require("../config/database.config");
+const { randomUUID } = require("crypto");
+const mongoose = require("mongoose");
 
-const PostModel = sequelize.define("User", {
-    id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
+const POST_LIFETIME_MS = 24 * 60 * 60 * 1000;
+
+function addComputedFields(ret) {
+  if (ret.createdAt) {
+    ret.expiredAt = new Date(new Date(ret.createdAt).getTime() + POST_LIFETIME_MS);
+  }
+
+  delete ret._id;
+  delete ret.__v;
+  return ret;
+}
+
+const postSchema = new mongoose.Schema(
+  {
+    post_id: {
+      type: String,
+      default: randomUUID,
+      unique: true,
+      index: true,
+      required: true,
     },
-    email: {
-        type: DataTypes.STRING,
-        unique: true,
-        allowNull: false,
-        validate: { isEmail: true },
+    post_content: {
+      type: String,
+      required: true,
     },
-    passwordHash: {
-        type: DataTypes.STRING,
-        allowNull: false,
+    user_id: {
+      type: String,
+      required: true,
+      index: true,
     },
-    role: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        defaultValue: "user",
-    },
-}, {
-    tableName: "users",
+  },
+  {
+    collection: "posts",
     timestamps: true,
-});
+    toJSON: {
+      transform: (_doc, ret) => {
+        return addComputedFields(ret);
+      },
+    },
+    toObject: {
+      transform: (_doc, ret) => {
+        return addComputedFields(ret);
+      },
+    },
+  }
+);
 
-module.exports = PostModel;
+module.exports = mongoose.model("Post", postSchema);

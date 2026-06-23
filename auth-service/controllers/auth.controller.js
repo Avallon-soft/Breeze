@@ -30,12 +30,20 @@ function validate(req, res) {
         return res.status(401).json({ message: "Unauthorized" });
     }
 
+    res.setHeader("X-User-UUID", req.user.uuid);
+
     return res.status(200).json({ message: "Token is valid" });
 
+}
+
+function logout(req, res) {
+    AuthService.logout(req.token);
+    return res.status(200).json({ message: "Logged out successfully" });
 }
 
 module.exports = {
     validate,
     register,
     login,
+    logout,
 };

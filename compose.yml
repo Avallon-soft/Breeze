@@ -1,6 +1,4 @@
-﻿services:
-
-  # Postgresql DB
+services:
 
   auth-postgres:
     container_name: postgres
@@ -32,7 +30,10 @@
   # BACKEND Auth service
 
   auth-service:
-    image: matthif/breeze-auth-backend:latest
+    #image: matthif/breeze-auth-backend:latest
+    build:
+      context: auth-service
+      dockerfile: Dockerfile
     environment:
       #API listen on port 3000
       API_PORT: 3000
@@ -47,6 +48,7 @@
       DB_USER: postgres
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: authdb
+      SOFTWARE_SERVICE_SYNC_URL: http://nginx/api/internal/users/sync
     depends_on:
       - auth-postgres
     networks:
@@ -83,6 +85,18 @@
 
   # BACKEND Software service
 
+  software-service:
+    build:
+      context: ./software-service
+      dockerfile: Dockerfile
+    environment:
+      SOFTWARE_MONGO_URI: mongodb://mongodb:mongodb@mongo-db:27017/softwaredb?authSource=admin
+      API_PORT: 3000
+    depends_on:
+      - mongo-db
+    networks:
+      - software-network
+
   # Frontend
 
   # Nginx
@@ -95,6 +109,22 @@
       - ./gateway/static/index.html:/etc/nginx/static/index.html
     ports:
       - "8080:80"
+    networks:
+      - auth-network
+      - software-network
+    depends_on:
+      - auth-service
+
+  # Swagger UI
+  swagger-ui:
+    image: swaggerapi/swagger-ui:latest
+    container_name: swagger_ui
+    volumes:
+      - ./openapi.yaml:/usr/share/nginx/html/openapi.yaml:ro
+    environment:
+      SWAGGER_JSON: /openapi.yaml
+    ports:
+      - "8082:8080"
     networks:
       - auth-network
       - software-network
