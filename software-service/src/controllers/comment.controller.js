@@ -2,10 +2,16 @@ const CommentService = require("../services/comment.service");
 
 async function createComment(req, res) {
   try {
-    const postId = req.query.breeze_id;
+    const { post_id, comment_id } = req.query;
     const { content } = req.body;
 
-    const comment = await CommentService.createComment(postId, content, req.user.uuid);
+    if (!post_id && !comment_id) {
+      return res.status(400).json({ message: "post_id or comment_id query param is required" });
+    }
+
+    const comment = post_id
+        ? await CommentService.createComment(post_id, content, req.user.uuid)
+        : await CommentService.createReply(comment_id, content, req.user.uuid);
 
     res.status(201).json(comment);
   } catch (err) {
@@ -15,27 +21,27 @@ async function createComment(req, res) {
 
 async function deleteComment(req, res) {
   try {
-    await CommentService.deleteComment(req.params.commentId);
+    const { commentId } = req.params;
+    const repliesOnly = req.query.replies_only === "true";
+
+    if (repliesOnly) {
+      await CommentService.deleteReplies(commentId);
+      return res.status(200).json({ message: "Replies deleted" });
+    }
+
+    await CommentService.deleteComment(commentId);
     res.status(200).json({ message: "Comment deleted" });
   } catch (err) {
     res.status(404).json({ message: err.message });
   }
 }
 
-async function createReply(req, res) {
+async function getComment(req, res) {
   try {
-    const { content, post_id } = req.body;
-
-    const reply = await CommentService.createReply(
-      req.params.commentId,
-      post_id,
-      content,
-      req.user.uuid
-    );
-
-    res.status(201).json(reply);
+    const comment = await CommentService.getComment(req.params.commentId);
+    res.status(200).json(comment);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(404).json({ message: err.message });
   }
 }
 
@@ -45,28 +51,6 @@ async function getReplies(req, res) {
     res.status(200).json(replies);
   } catch (err) {
     res.status(500).json({ message: err.message });
-  }
-}
-
-async function deleteReplies(req, res) {
-  try {
-    await CommentService.deleteReplies(req.params.commentId);
-    res.status(200).json({ message: "Replies deleted" });
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-}
-
-async function likeComment(req, res) {
-  try {
-    const like = await CommentService.likeComment(
-      req.params.commentId,
-      req.user.uuid
-    );
-
-    res.status(201).json(like);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
   }
 }
 
@@ -82,9 +66,7 @@ async function getCommentLikes(req, res) {
 module.exports = {
   createComment,
   deleteComment,
-  createReply,
+  getComment,
   getReplies,
-  deleteReplies,
-  likeComment,
-  getCommentLikes
+  getCommentLikes,
 };

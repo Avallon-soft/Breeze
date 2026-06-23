@@ -37,7 +37,7 @@ app.use(attachUserContext);
 
 app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
-app.use("/api/like", likeRoutes);
+app.use("/api/likes", likeRoutes);
 app.use("/api/subscribe", followRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/feed", feedRoutes);

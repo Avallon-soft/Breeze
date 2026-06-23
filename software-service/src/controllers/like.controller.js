@@ -1,10 +1,16 @@
 const LikeService = require("../services/like.service");
 
-async function likePost(req, res) {
+async function like(req, res) {
   try {
-    const postId = req.query.breeze_id;
+    const { post_id, comment_id } = req.query;
 
-    const like = await LikeService.likePost(postId, req.user.uuid);
+    if (!post_id && !comment_id) {
+      return res.status(400).json({ message: "post_id or comment_id query param is required" });
+    }
+
+    const like = post_id
+        ? await LikeService.likePost(post_id, req.user.uuid)
+        : await LikeService.likeComment(comment_id, req.user.uuid);
 
     res.status(201).json(like);
   } catch (err) {
@@ -12,8 +18,6 @@ async function likePost(req, res) {
   }
 }
 
-
-
 module.exports = {
-  likePost
+  like,
 };
