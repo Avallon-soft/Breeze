@@ -1,5 +1,16 @@
 const UserService = require("../services/user.service");
 
+async function syncUserFromAuth(req, res) {
+  try {
+    const { uuid, email } = req.body;
+    const user = await UserService.syncUserFromAuth(uuid, email);
+
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
 async function getUserById(req, res) {
   try {
     const user = await UserService.getUserById(req.params.userId);
@@ -28,6 +39,7 @@ async function getFollowing(req, res) {
 }
 
 module.exports = {
+  syncUserFromAuth,
   getUserById,
   getFollowers,
   getFollowing

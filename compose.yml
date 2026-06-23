@@ -48,6 +48,7 @@ services:
       DB_USER: postgres
       DB_PASSWORD: postgres
       DB_NAME: authdb
+      SOFTWARE_SERVICE_SYNC_URL: http://nginx/api/internal/users/sync
     depends_on:
       - auth-postgres
     networks:
