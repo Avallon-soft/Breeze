@@ -23,6 +23,20 @@ const postSchema = new mongoose.Schema(
   {
     collection: "posts",
     timestamps: true,
+    toJSON: {
+      transform: (_doc, ret) => {
+        delete ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+    toObject: {
+      transform: (_doc, ret) => {
+        delete ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
   }
 );
 
