@@ -1,8 +1,8 @@
 const express = require("express");
 require("dotenv").config();
 
-const { connectDatabase } = require("./models");
-const { authenticate } = require("./middleware/auth.middleware");
+const { connectDatabase, mongoose } = require("./models");
+const { attachUserContext } = require("./middleware/user-context.middleware");
 
 const postRoutes = require("./routes/post.route");
 const commentRoutes = require("./routes/comment.route");
@@ -19,10 +19,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/api/health", (req, res) => {
-  res.status(200).json({ status: "UP" });
+  const mongoConnected = mongoose.connection.readyState === 1;
+
+  res.status(mongoConnected ? 200 : 503).json({
+    status: mongoConnected ? "UP" : "DEGRADED",
+    service: "software-service",
+    database: {
+      type: "mongodb",
+      status: mongoConnected ? "CONNECTED" : "DISCONNECTED",
+    },
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+  });
 });
 
-app.use(authenticate);
+app.use(attachUserContext);
 
 app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
