@@ -6,7 +6,7 @@ services:
     environment:
       - POSTGRES_DB=authdb
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
       - db-data:/var/lib/postgresql/data
       - ./auth-service/asset/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -21,7 +21,7 @@ services:
       - "8888:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: breeze@breeze.com
-      PGADMIN_DEFAULT_PASSWORD: 2vnxZeNo7zMrAadE
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     volumes:
       - pgadmin-data:/var/lib/pgadmin
     networks:
@@ -40,13 +40,13 @@ services:
       NODE_ENV: dev
       # JWT
       SALT_ROUNDS: 12
-      JWT_SECRET: EAyb1J8FNLAy5kjzYbB2TnyDxhPUYR6NzVpSGHuPGNxs6hxFGLB1fjHPobX
+      JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRES_IN: 1h
       # Database
       DB_HOST: auth-postgres
       DB_PORT: 5432
       DB_USER: postgres
-      DB_PASSWORD: postgres
+      DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: authdb
       SOFTWARE_SERVICE_SYNC_URL: http://nginx/api/internal/users/sync
     depends_on:
@@ -61,7 +61,7 @@ services:
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: mongodb
-      MONGO_INITDB_ROOT_PASSWORD: mongodb
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
       MONGO_INITDB_DATABASE: softwaredb
     volumes:
       - mongodb:/data/db
@@ -74,10 +74,10 @@ services:
     ports:
       - "8081:8081"
     environment:
-      ME_CONFIG_MONGODB_URL: mongodb://mongodb:mongodb@mongo-db:27017/
+      ME_CONFIG_MONGODB_URL: ${ME_CONFIG_MONGODB_URL}
       ME_CONFIG_BASICAUTH_ENABLED: true
       ME_CONFIG_BASICAUTH_USERNAME: mongoexpressuser
-      ME_CONFIG_BASICAUTH_PASSWORD: 4gCOJBKNR3KkTaqN
+      ME_CONFIG_BASICAUTH_PASSWORD: ${ME_CONFIG_BASICAUTH_PASSWORD}
     depends_on:
       - mongo-db
     networks:
@@ -122,7 +122,7 @@ services:
     volumes:
       - ./openapi.yaml:/usr/share/nginx/html/openapi.yaml:ro
     environment:
-      - SWAGGER_JSON=/openapi.yaml
+      SWAGGER_JSON: /openapi.yaml
     ports:
       - "8082:8080"
     networks:
