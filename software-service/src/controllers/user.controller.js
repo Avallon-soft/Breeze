@@ -1,5 +1,14 @@
 const UserService = require("../services/user.service");
 
+async function getUserById(req, res) {
+  try {
+    const user = await UserService.getUserById(req.params.userId);
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+}
+
 async function getFollowers(req, res) {
   try {
     const followers = await UserService.getFollowers(req.params.userId);
@@ -19,6 +28,7 @@ async function getFollowing(req, res) {
 }
 
 module.exports = {
+  getUserById,
   getFollowers,
   getFollowing
 };
