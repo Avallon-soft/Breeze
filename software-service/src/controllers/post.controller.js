@@ -30,19 +30,23 @@ async function getPostById(req, res) {
 
 async function updatePost(req, res) {
   try {
-    const post = await PostService.updatePost(req.params.id, req.body.content);
+    const post = await PostService.updatePost(
+      req.params.id,
+      req.body.content,
+      req.user.uuid
+    );
     res.status(200).json(post);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(err.statusCode || 400).json({ message: err.message });
   }
 }
 
 async function deletePost(req, res) {
   try {
-    await PostService.deletePost(req.params.id);
+    await PostService.deletePost(req.params.id, req.user.uuid);
     res.status(200).json({ message: "Post deleted" });
   } catch (err) {
-    res.status(404).json({ message: err.message });
+    res.status(err.statusCode || 404).json({ message: err.message });
   }
 }
 

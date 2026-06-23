@@ -11,6 +11,7 @@ const followRoutes = require("./routes/follow.route");
 const userRoutes = require("./routes/user.route");
 const feedRoutes = require("./routes/feed.route");
 const meRoutes = require("./routes/me.route");
+const internalRoutes = require("./routes/internal.route");
 
 const app = express();
 const port = process.env.API_PORT || 3001;
@@ -32,6 +33,8 @@ app.get("/api/health", (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+app.use("/api/internal", internalRoutes);
 
 app.use(attachUserContext);
 

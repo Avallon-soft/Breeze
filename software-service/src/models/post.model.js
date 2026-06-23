@@ -1,6 +1,18 @@
 const { randomUUID } = require("crypto");
 const mongoose = require("mongoose");
 
+const POST_LIFETIME_MS = 24 * 60 * 60 * 1000;
+
+function addComputedFields(ret) {
+  if (ret.createdAt) {
+    ret.expiredAt = new Date(new Date(ret.createdAt).getTime() + POST_LIFETIME_MS);
+  }
+
+  delete ret._id;
+  delete ret.__v;
+  return ret;
+}
+
 const postSchema = new mongoose.Schema(
   {
     post_id: {
@@ -25,16 +37,12 @@ const postSchema = new mongoose.Schema(
     timestamps: true,
     toJSON: {
       transform: (_doc, ret) => {
-        delete ret._id;
-        delete ret.__v;
-        return ret;
+        return addComputedFields(ret);
       },
     },
     toObject: {
       transform: (_doc, ret) => {
-        delete ret._id;
-        delete ret.__v;
-        return ret;
+        return addComputedFields(ret);
       },
     },
   }
