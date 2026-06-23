@@ -11,8 +11,6 @@ async function getFeed(userId) {
 
   const followingIds = follows.map(follow => follow.following_id);
 
-  followingIds.push(userId);
-
   return await Post.find({
     user_id: {
       $in: followingIds,
