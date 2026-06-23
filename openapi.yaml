@@ -1,0 +1,600 @@
+openapi: 3.0.3
+info:
+  title: Breeze API
+  version: 1.0.0
+  description: Combined OpenAPI spec for Breeze microservices (auth-service and software-service).
+servers:
+  - url: http://localhost:3001
+    description: software-service (posts, comments, likes, users, feed, me)
+  - url: http://localhost:3000
+    description: auth-service (authentication)
+paths:
+  /api/health:
+    get:
+      summary: Health check for software-service
+      responses:
+        '200':
+          description: Service healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  service:
+                    type: string
+                  database:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                      status:
+                        type: string
+                  uptime:
+                    type: number
+                  timestamp:
+                    type: string
+  /api/posts:
+    post:
+      summary: Create a post
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+              required: [content]
+      responses:
+        '201':
+          description: Created post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+    get:
+      summary: Get all posts
+      responses:
+        '200':
+          description: List of posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+  /api/posts/{id}:
+    parameters:
+      - $ref: '#/components/parameters/PostId'
+    get:
+      summary: Get a post by id
+      responses:
+        '200':
+          description: Post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+    put:
+      summary: Update a post
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+              required: [content]
+      responses:
+        '200':
+          description: Updated post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+    delete:
+      summary: Delete a post
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /api/posts/{postId}/comments:
+    parameters:
+      - $ref: '#/components/parameters/PostIdParam'
+    get:
+      summary: Get comments for a post
+      responses:
+        '200':
+          description: Comments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+  /api/posts/{postId}/likes:
+    parameters:
+      - $ref: '#/components/parameters/PostIdParam'
+    get:
+      summary: Get likes for a post
+      responses:
+        '200':
+          description: Likes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Like'
+  /api/comments:
+    post:
+      summary: Create a comment or reply
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: post_id
+          schema:
+            type: string
+          description: Target post id (either post_id or comment_id required)
+        - in: query
+          name: comment_id
+          schema:
+            type: string
+          description: Parent comment id to create a reply
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+              required: [content]
+      responses:
+        '201':
+          description: Created comment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+  /api/comments/{commentId}:
+    parameters:
+      - $ref: '#/components/parameters/CommentId'
+    get:
+      summary: Get a comment by id
+      responses:
+        '200':
+          description: Comment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+    delete:
+      summary: Delete comment (or only replies)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: replies_only
+          schema:
+            type: boolean
+          description: If true, delete only replies
+      responses:
+        '200':
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /api/comments/{commentId}/replies:
+    parameters:
+      - $ref: '#/components/parameters/CommentId'
+    get:
+      summary: Get replies to a comment
+      responses:
+        '200':
+          description: Replies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+  /api/comments/{commentId}/likes:
+    parameters:
+      - $ref: '#/components/parameters/CommentId'
+    get:
+      summary: Get likes for a comment
+      responses:
+        '200':
+          description: Likes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Like'
+  /api/likes:
+    post:
+      summary: Like a post or comment
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: post_id
+          schema:
+            type: string
+        - in: query
+          name: comment_id
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Created like
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Like'
+  /api/subscribe:
+    post:
+      summary: Follow another user
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: user_id
+          schema:
+            type: string
+          required: true
+          description: User id to follow
+      responses:
+        '201':
+          description: Follow created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Follow'
+  /api/users/{userId}:
+    parameters:
+      - $ref: '#/components/parameters/UserId'
+    get:
+      summary: Get user by id
+      responses:
+        '200':
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /api/users/{userId}/profile:
+    parameters:
+      - $ref: '#/components/parameters/UserId'
+    get:
+      summary: Get public profile by user id
+      responses:
+        '200':
+          description: Profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /api/users/{userId}/followers:
+    parameters:
+      - $ref: '#/components/parameters/UserId'
+    get:
+      summary: Get followers of a user
+      responses:
+        '200':
+          description: Followers list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+  /api/users/{userId}/following:
+    parameters:
+      - $ref: '#/components/parameters/UserId'
+    get:
+      summary: Get users this user is following
+      responses:
+        '200':
+          description: Following list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+  /api/feed:
+    get:
+      summary: Get feed for authenticated user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Feed
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+  /api/me/profile:
+    get:
+      summary: Get my profile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    put:
+      summary: Upsert my profile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+              required: [username]
+      responses:
+        '200':
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /api/me/likes:
+    get:
+      summary: Get my likes
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Likes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Like'
+  /api/auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthRegisterRequest'
+      responses:
+        '201':
+          description: Registration successful (returns uuid and token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthRegisterResponse'
+  /api/auth/login:
+    post:
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthLoginRequest'
+      responses:
+        '200':
+          description: Login successful (returns token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthLoginResponse'
+  /api/auth/validate:
+    get:
+      summary: Validate token
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Token valid
+          headers:
+            X-User-UUID:
+              schema:
+                type: string
+              description: UUID of validated user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /api/auth/logout:
+    post:
+      summary: Logout (invalidate token)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    PostId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Post id
+    PostIdParam:
+      name: postId
+      in: path
+      required: true
+      schema:
+        type: string
+    CommentId:
+      name: commentId
+      in: path
+      required: true
+      schema:
+        type: string
+    UserId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+  schemas:
+    User:
+      type: object
+      properties:
+        user_id:
+          type: string
+        username:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    Post:
+      type: object
+      properties:
+        post_id:
+          type: string
+        post_content:
+          type: string
+        user_id:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    Comment:
+      type: object
+      properties:
+        comment_id:
+          type: string
+        comment_content:
+          type: string
+        user_id:
+          type: string
+        post_id:
+          type: string
+        parent_comment_id:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    Like:
+      type: object
+      properties:
+        like_id:
+          type: string
+        user_id:
+          type: string
+        post_id:
+          type: string
+          nullable: true
+        comment_id:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+    Follow:
+      type: object
+      properties:
+        follower_id:
+          type: string
+        following_id:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    AuthRegisterRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required: [email, password]
+    AuthLoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required: [email, password]
+    AuthRegisterResponse:
+      type: object
+      properties:
+        uuid:
+          type: string
+        token:
+          type: string
+    AuthLoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
