@@ -30,6 +30,8 @@ function validate(req, res) {
         return res.status(401).json({ message: "Unauthorized" });
     }
 
+    res.setHeader("X-User-UUID", req.user.uuid);
+
     return res.status(200).json({ message: "Token is valid" });
 
 }
