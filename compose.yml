@@ -32,17 +32,15 @@ services:
   auth-service:
     #image: matthif/breeze-auth-backend:latest
     build:
-      context: auth-service
+      context: ./auth-service
       dockerfile: Dockerfile
+    container_name: auth-service
     environment:
-      #API listen on port 3000
       API_PORT: 3000
       NODE_ENV: dev
-      # JWT
       SALT_ROUNDS: 12
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRES_IN: 1h
-      # Database
       DB_HOST: auth-postgres
       DB_PORT: 5432
       DB_USER: postgres
@@ -53,6 +51,7 @@ services:
       - auth-postgres
     networks:
       - auth-network
+      - backend
 
   # ------------------ Mongo DB ------------------
 
@@ -86,9 +85,11 @@ services:
   # BACKEND Software service
 
   software-service:
+    #image: matthif/breeze-soft-backend:latest
     build:
       context: ./software-service
       dockerfile: Dockerfile
+    container_name: software-service
     environment:
       SOFTWARE_MONGO_URI: mongodb://mongodb:mongodb@mongo-db:27017/softwaredb?authSource=admin
       API_PORT: 3000
@@ -96,10 +97,24 @@ services:
       - mongo-db
     networks:
       - software-network
+      - backend
 
-  # Frontend
+  # ------------------ Pict-rs (image hosting) ------------------
 
-  # Nginx
+  pictrs:
+    image: asonix/pictrs:latest
+    container_name: pictrs
+    restart: always
+    user: "991:991"
+    environment:
+      - PICTRS__SERVER__API_KEY=${PICTRS_SERVER_API_KEY}
+      - PICTRS__MEDIA__MAX_FILE_SIZE=10
+    volumes:
+      - pictrs-data:/mnt
+    networks:
+      - pict_rs
+
+  # Frontend / Nginx
 
   nginx:
     image: nginx:1.29.1-alpine
@@ -112,10 +127,13 @@ services:
     networks:
       - auth-network
       - software-network
+      - pict_rs
     depends_on:
       - auth-service
+      - pictrs
 
   # Swagger UI
+
   swagger-ui:
     image: swaggerapi/swagger-ui:latest
     container_name: swagger_ui
@@ -136,6 +154,10 @@ networks:
     driver: bridge
   software-network:
     driver: bridge
+  backend:
+    driver: bridge
+  pict_rs:
+    driver: bridge
 
 volumes:
   db-data:
@@ -144,3 +166,5 @@ volumes:
     name: postgres-pgadmin-data
   mongodb:
     name: mongodb-db-data
+  pictrs-data:
+    name: pictrs-data
