@@ -39,6 +39,20 @@ async function getUserById(userId) {
   return user;
 }
 
+async function searchUsersByUsername(username) {
+  if (!username || !username.trim()) {
+    throw new Error("Username search is required");
+  }
+
+  const escapedUsername = username
+    .trim()
+    .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+  return await User.find({
+    username: { $regex: escapedUsername, $options: "i" },
+  }).sort({ username: 1 });
+}
+
 async function getFollowers(userId) {
   return await Follow.find({
     following_id: userId,
@@ -54,6 +68,7 @@ async function getFollowing(userId) {
 module.exports = {
   syncUserFromAuth,
   getUserById,
+  searchUsersByUsername,
   getFollowers,
   getFollowing,
 };
