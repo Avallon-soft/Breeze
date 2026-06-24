@@ -1,13 +1,22 @@
-﻿FROM node:latest AS frontend
-LABEL authors="matth"
-
-#create app directory and use it as default directory in docker image
+﻿FROM node:latest AS builder
 WORKDIR /app
 
-#copy package.json and install dependency
 COPY package*.json ./
 RUN npm install
 
 COPY . .
+RUN npm run build
 
-ENTRYPOINT ["npm", "run", "dev"]
+# Image finale légère
+FROM node:alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]
