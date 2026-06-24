@@ -456,6 +456,106 @@ paths:
                 properties:
                   message:
                     type: string
+
+  /image:
+    post:
+      summary: Upload one or multiple images (multipart/form-data)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                "images[]":
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+              required:
+                - "images[]"
+      responses:
+        '201':
+          description: Images uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uploaded:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        filename:
+                          type: string
+                        url:
+                          type: string
+
+  /image/process.jpg:
+    get:
+      summary: Process or fetch an image via pictrs (proxy to pictrs)
+      parameters:
+        - in: query
+          name: src
+          schema:
+            type: string
+          required: true
+          description: Source image name or id stored in pictrs (e.g., c4588d0a-fe15-4180-a263-4dc4779a92f1.jpeg)
+        - in: query
+          name: blur
+          schema:
+            type: integer
+          description: Blur radius (example: 5)
+        - in: query
+          name: width
+          schema:
+            type: integer
+          description: Resize width in pixels
+        - in: query
+          name: height
+          schema:
+            type: integer
+          description: Resize height in pixels
+        - in: query
+          name: fit
+          schema:
+            type: string
+            enum: [contain, cover, fill, inside, outside]
+          description: Resize fit mode
+        - in: query
+          name: quality
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+          description: Output quality (1-100)
+        - in: query
+          name: format
+          schema:
+            type: string
+          description: Output format (jpg, png, webp, etc.)
+        - in: query
+          name: rotate
+          schema:
+            type: integer
+          description: Degrees to rotate the image
+      responses:
+        '200':
+          description: Returns processed image (binary)
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   securitySchemes:
     bearerAuth:
