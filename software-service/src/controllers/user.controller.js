@@ -20,6 +20,15 @@ async function getUserById(req, res) {
   }
 }
 
+async function searchUsersByUsername(req, res) {
+  try {
+    const users = await UserService.searchUsersByUsername(req.query.username);
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
 async function getFollowers(req, res) {
   try {
     const followers = await UserService.getFollowers(req.params.userId);
@@ -41,6 +50,7 @@ async function getFollowing(req, res) {
 module.exports = {
   syncUserFromAuth,
   getUserById,
+  searchUsersByUsername,
   getFollowers,
   getFollowing
 };
