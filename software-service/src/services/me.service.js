@@ -20,7 +20,7 @@ async function getMyProfile(userId) {
   return profile;
 }
 
-async function upsertMyProfile(userId, username) {
+async function upsertMyProfile(userId, { username, bio, avatar, banner } = {}) {
   if (!userId) {
     throw new Error("User id is required");
   }
@@ -34,6 +34,9 @@ async function upsertMyProfile(userId, username) {
     {
       user_id: userId,
       username: username.trim(),
+      ...(bio !== undefined && { bio: bio?.trim() ?? "" }),
+      ...(avatar !== undefined && { avatar }),
+      ...(banner !== undefined && { banner }),
     },
     {
       new: true,

@@ -14,6 +14,20 @@ const userSchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
+    bio: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: 300,
+    },
+    avatar: {
+      type: String,
+      default: null,
+    },
+    banner: {
+      type: String,
+      default: null,
+    },
   },
   {
     collection: "users",
