@@ -559,7 +559,7 @@ paths:
           schema:
             type: string
           required: true
-          description: Image filename or id stored in pictrs (e.g., c4588d0a-fe15-4180-a263-4dc4779a92f1.jpeg). This is part of the path: /image/process/{image_url}
+          description: "Image filename or id stored in pictrs (e.g., c4588d0a-fe15-4180-a263-4dc4779a92f1.jpeg). This is part of the path: /image/process/{image_url}"
         - in: query
           name: blur
           schema:
