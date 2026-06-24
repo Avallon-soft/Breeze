@@ -475,24 +475,80 @@ paths:
               required:
                 - "images[]"
       responses:
-        '201':
-          description: Images uploaded
+        '200':
+          description: Images uploaded (pictrs response)
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  uploaded:
+                  files:
                     type: array
                     items:
                       type: object
                       properties:
-                        id:
+                        delete_token:
                           type: string
-                        filename:
+                        details:
+                          type: object
+                          properties:
+                            blurhash:
+                              type: string
+                            content_type:
+                              type: string
+                            created_at:
+                              type: string
+                              format: date-time
+                            format:
+                              type: string
+                            frames:
+                              nullable: true
+                              type: integer
+                            height:
+                              type: integer
+                            width:
+                              type: integer
+                        file:
                           type: string
-                        url:
+                  msg:
+                    type: string
+        '201':
+          description: Images uploaded (pictrs response)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  files:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        delete_token:
                           type: string
+                        details:
+                          type: object
+                          properties:
+                            blurhash:
+                              type: string
+                            content_type:
+                              type: string
+                            created_at:
+                              type: string
+                              format: date-time
+                            format:
+                              type: string
+                            frames:
+                              nullable: true
+                              type: integer
+                            height:
+                              type: integer
+                            width:
+                              type: integer
+                        file:
+                          type: string
+                  msg:
+                    type: string
 
   /image/process.jpg:
     get:
@@ -508,7 +564,7 @@ paths:
           name: blur
           schema:
             type: integer
-          description: Blur radius (example: 5)
+          description: "Blur radius (example: 5)"
         - in: query
           name: width
           schema:
