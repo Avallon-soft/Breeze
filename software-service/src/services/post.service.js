@@ -1,6 +1,6 @@
 const { Post, Comment, Like } = require("../models");
 
-async function createPost(content, userId) {
+async function createPost(content, userId, expiresAt) {
   if (!content || content.trim() === "") {
     throw new Error("Post content is required");
   }
@@ -9,14 +9,24 @@ async function createPost(content, userId) {
     throw new Error("User id is required");
   }
 
-  return await Post.create({
+  const postData = {
     post_content: content,
     user_id: userId,
-  });
+  };
+
+  if (expiresAt) {
+    postData.expiresAt = new Date(expiresAt);
+  }
+
+  return await Post.create(postData);
 }
 
 async function getAllPosts() {
-  return await Post.find().sort({ createdAt: -1 });
+  return await Post.find({
+    expiresAt: {
+      $gt: new Date(),
+    },
+  }).sort({ createdAt: -1 });
 }
 
 async function getPostById(id) {

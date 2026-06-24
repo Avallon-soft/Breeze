@@ -1,5 +1,6 @@
 const express = require("express");
 require("dotenv").config();
+const cors = require("cors");
 
 const { connectDatabase, mongoose } = require("./models");
 const { attachUserContext } = require("./middleware/user-context.middleware");
@@ -14,7 +15,14 @@ const meRoutes = require("./routes/me.route");
 const internalRoutes = require("./routes/internal.route");
 
 const app = express();
-const port = process.env.API_PORT || 3001;
+const port = process.env.API_PORT || 3000;
+
+app.use(
+  cors({
+    origin: "http://localhost:3001",
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

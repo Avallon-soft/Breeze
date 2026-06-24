@@ -1,15 +1,16 @@
 const { randomUUID } = require("crypto");
 const mongoose = require("mongoose");
 
-const POST_LIFETIME_MS = 24 * 60 * 60 * 1000;
+// const POST_LIFETIME_MS = 24 * 60 * 60 * 1000;
 
 function addComputedFields(ret) {
-  if (ret.createdAt) {
-    ret.expiredAt = new Date(new Date(ret.createdAt).getTime() + POST_LIFETIME_MS);
+  if (ret.expiresAt) {
+    ret.expired = new Date(ret.expiresAt) <= new Date();
   }
 
   delete ret._id;
   delete ret.__v;
+
   return ret;
 }
 
@@ -28,6 +29,11 @@ const postSchema = new mongoose.Schema(
     },
     user_id: {
       type: String,
+      required: true,
+      index: true,
+    },
+    expiresAt: {
+      type: Date,
       required: true,
       index: true,
     },
