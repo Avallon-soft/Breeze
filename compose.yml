@@ -116,6 +116,19 @@ services:
 
   # Frontend / Nginx
 
+  breeze:
+    #image:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    container_name: breeze-front-end
+    ports:
+      - "3000:3001"
+    networks:
+      - frontend-network
+    depends_on:
+      - nginx
+
   nginx:
     image: nginx:1.29.1-alpine
     container_name: gateway
@@ -128,6 +141,7 @@ services:
       - auth-network
       - software-network
       - pict_rs
+      - frontend-network
     depends_on:
       - auth-service
       - pictrs
@@ -157,6 +171,8 @@ networks:
   backend:
     driver: bridge
   pict_rs:
+    driver: bridge
+  frontend-network:
     driver: bridge
 
 volumes:
