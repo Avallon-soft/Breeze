@@ -63,10 +63,23 @@ async function getCommentLikes(req, res) {
   }
 }
 
+async function createReply(req, res) {
+  try {
+    const { commentId } = req.params;
+    const { content } = req.body;
+
+    const reply = await CommentService.createReply(commentId, content, req.user.uuid);
+    res.status(201).json(reply);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
 module.exports = {
   createComment,
   deleteComment,
   getComment,
   getReplies,
   getCommentLikes,
+  createReply,
 };

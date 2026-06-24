@@ -30,10 +30,10 @@ services:
   # BACKEND Auth service
 
   auth-service:
-    #image: matthif/breeze-auth-backend:latest
-    build:
-      context: ./auth-service
-      dockerfile: Dockerfile
+    image: matthif/breeze-auth-backend:latest
+    #build:
+    #  context: ./auth-service
+    #   dockerfile: Dockerfile
     container_name: auth-service
     environment:
       API_PORT: 3000
@@ -85,10 +85,10 @@ services:
   # BACKEND Software service
 
   software-service:
-    #image: matthif/breeze-soft-backend:latest
-    build:
-      context: ./software-service
-      dockerfile: Dockerfile
+    image: matthif/breeze-soft-backend:latest
+    #build:
+    #  context: ./software-service
+    #  dockerfile: Dockerfile
     container_name: software-service
     environment:
       SOFTWARE_MONGO_URI: mongodb://mongodb:mongodb@mongo-db:27017/softwaredb?authSource=admin
@@ -116,6 +116,22 @@ services:
 
   # Frontend / Nginx
 
+  breeze:
+    image: matthif/breeze-frontend:latest
+    #build:
+    #  context: frontend
+    #  dockerfile: Dockerfile
+    container_name: breeze-front-end
+    ports:
+      - "3001:3000"
+    networks:
+      - frontend-network
+    environment:
+      NEXT_PUBLIC_IMAGE_BASE: http://localhost:8080
+      NEXT_PUBLIC_API_BASE: http://localhost:8080
+    depends_on:
+      - nginx
+
   nginx:
     image: nginx:1.29.1-alpine
     container_name: gateway
@@ -128,6 +144,7 @@ services:
       - auth-network
       - software-network
       - pict_rs
+      - frontend-network
     depends_on:
       - auth-service
       - pictrs
@@ -157,6 +174,8 @@ networks:
   backend:
     driver: bridge
   pict_rs:
+    driver: bridge
+  frontend-network:
     driver: bridge
 
 volumes:

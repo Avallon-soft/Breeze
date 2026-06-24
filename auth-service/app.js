@@ -2,11 +2,20 @@ require("dotenv").config();
 
 const express = require("express");
 
+const cors = require("cors");
+
 const authRoutes = require("./routes/auth.route");
-const {authenticate} = require("./middleware/auth.middleware");
+const { authenticate } = require("./middleware/auth.middleware");
 
 const app = express();
 const port = process.env.API_PORT || 3000;
+
+app.use(
+  cors({
+    origin: "http://localhost:3001",
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
