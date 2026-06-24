@@ -10,20 +10,20 @@ import {
   Send,
   User,
   Settings,
-  MoreHorizontal,
+  LogOut,
 } from "lucide-react";
+import { useState } from "react";
 
-const navItems = [
-  { href: "/", label: "Accueil", icon: Home },
-  { href: "/explorer", label: "Explorer", icon: Search },
-  { href: "/notifications", label: "Notifications", icon: Bell, badge: 4 },
-  { href: "/messages", label: "Messages", icon: Send, badge: 2 },
-  { href: "/profil", label: "Profil", icon: User },
-  { href: "/parametres", label: "Paramètres", icon: Settings },
-];
 
-export default function Sidebar({ user }) {
+export default function Sidebar({ user, onLogout }) {
   const pathname = usePathname();
+  const [showMenu, setShowMenu] = useState(false);
+
+  const navItems = [
+    { href: "/", label: "Accueil", icon: Home },
+    { href: "/explore", label: "Explorer", icon: Search },
+    { href: `/profile/${user.userId}`, label: "Profil", icon: User },
+  ];
 
   return (
     <aside className="w-60 h-screen flex-shrink-0 flex flex-col border-r border-gray-100 bg-white px-3 py-6">
@@ -39,11 +39,10 @@ export default function Sidebar({ user }) {
             <Link
               key={href}
               href={href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                isActive
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${isActive
                   ? "bg-green-50 text-green-600"
                   : "text-gray-500 hover:bg-gray-50 hover:text-gray-800"
-              }`}
+                }`}
             >
               <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
               <span className="flex-1">{label}</span>
@@ -57,24 +56,40 @@ export default function Sidebar({ user }) {
         })}
       </nav>
 
-      <button className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white text-sm font-semibold py-2.5 px-4 rounded-xl transition-colors mb-5">
+      <Link href="/" className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white text-sm font-semibold py-2.5 px-4 rounded-xl transition-colors mb-5">
         <Wind size={16} />
         Créer une breeze
-      </button>
+      </Link>
 
-      <div className="flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-        <img
-          src={user.profile}
-          alt={user.name}
-          className="w-8 h-8 rounded-full object-cover flex-shrink-0"
-        />
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-gray-900 truncate">{user.name}</p>
-          <p className="text-xs text-gray-400 truncate">@{user.tag}</p>
-        </div>
-        <button className="text-gray-400 hover:text-gray-600 flex-shrink-0">
-          <MoreHorizontal size={16} />
+
+      <div className="relative">
+        <button
+          onClick={() => setShowMenu(!showMenu)}
+          className="w-full flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+        >
+          <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
+            <span className="text-xs font-bold">{user.name?.[0]?.toUpperCase()}</span>
+          </div>
+          <div className="flex-1 min-w-0 text-left">
+            <p className="text-sm font-semibold text-gray-900 truncate">{user.name}</p>
+            {/* <p className="text-xs text-gray-400 truncate">@{user.tag}</p> */}
+          </div>
         </button>
+
+        {showMenu && (
+          <div className="absolute bottom-full mb-2 left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+            <button
+              onClick={() => {
+                setShowMenu(false);
+                onLogout?.();
+              }}
+              className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg"
+            >
+              <LogOut size={16} />
+              Déconnexion
+            </button>
+          </div>
+        )}
       </div>
     </aside>
   );
