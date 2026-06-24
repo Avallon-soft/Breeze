@@ -550,16 +550,16 @@ paths:
                   msg:
                     type: string
 
-  /image/process.jpg:
+  /image/process/{image_url}:
     get:
       summary: Process or fetch an image via pictrs (proxy to pictrs)
       parameters:
-        - in: query
-          name: src
+        - in: path
+          name: image_url
           schema:
             type: string
           required: true
-          description: Source image name or id stored in pictrs (e.g., c4588d0a-fe15-4180-a263-4dc4779a92f1.jpeg)
+          description: Image filename or id stored in pictrs (e.g., c4588d0a-fe15-4180-a263-4dc4779a92f1.jpeg). This is part of the path: /image/process/{image_url}
         - in: query
           name: blur
           schema:
