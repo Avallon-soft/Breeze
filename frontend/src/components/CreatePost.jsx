@@ -16,13 +16,13 @@ const durationToMs = {
 };
 
 const MAX_CHAR = 280;
-const PICTRS_BASE = "http://localhost:8080/image/original/";
+const PICTRS_BASE = process.env.NEXT_PUBLIC_IMAGE_BASE + "/image/original/";
 
 async function uploadImage(file) {
   const formData = new FormData();
   formData.append("images[]", file);
 
-  const res = await fetch("http://localhost:8080/image", {
+  const res = await fetch(process.env.NEXT_PUBLIC_IMAGE_BASE + "/image", {
     method: "POST",
     body: formData,
   });

@@ -14,13 +14,13 @@ import followService from "@/core/services/follow.service";
 import meService from "@/core/services/me.service";
 import { Pencil, Camera, Check, X, Loader2 } from "lucide-react";
 
-const PICTRS_BASE = "http://localhost:8080/image/original/";
+const PICTRS_BASE = process.env.NEXT_PUBLIC_IMAGE_BASE + "/image/original/";
 
 export async function uploadImage(file) {
   const formData = new FormData();
   formData.append("images[]", file);
 
-  const res = await fetch("http://localhost:8080/image", {
+  const res = await fetch(process.env.NEXT_PUBLIC_IMAGE_BASE + "/image", {
     method: "POST",
     body: formData,
   });
