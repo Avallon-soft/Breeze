@@ -20,7 +20,8 @@ async function getMyProfile(req, res) {
 
 async function upsertMyProfile(req, res) {
   try {
-    const profile = await MeService.upsertMyProfile(req.user.uuid, req.body.username);
+    const { username, bio, avatar, banner } = req.body;
+    const profile = await MeService.upsertMyProfile(req.user.uuid, { username, bio, avatar, banner });
     res.status(200).json(profile);
   } catch (err) {
     res.status(400).json({ message: err.message });
