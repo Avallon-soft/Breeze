@@ -7,13 +7,12 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-# Image finale légère
 FROM node:alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY --from=builder /app/public ./public
+# Copie public seulement s'il existe
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
