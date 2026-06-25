@@ -50,7 +50,7 @@ export function AuthProvider({ children }) {
 
       // On récupère l'utilisateur juste après le login
       const result = await userService.getProfile();
-      if (result?.data?.profile) setUser(result.data.profile);
+      if (result) setUser(result);
 
       return true;
     } catch (err) {
