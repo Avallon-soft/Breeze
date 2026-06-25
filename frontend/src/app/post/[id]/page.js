@@ -85,7 +85,7 @@ export default function PostDetailPage() {
   const sidebarUser = {
     name: authUser?.username || "Utilisateur",
     tag: authUser?.username?.toLowerCase().replace(/\s+/g, "_") || "user",
-    profile: "https://i.pravatar.cc/100?img=12",
+    profile: authUser?.avatar ? authUser?.avatar : "https://i.pravatar.cc/100?img=12",
     userId: authUser?.user_id,
   };
 

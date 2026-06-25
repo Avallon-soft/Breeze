@@ -34,11 +34,11 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  const login = async (username, password) => {
+  const login = async (email, password) => {
     try {
       setError(null);
 
-      const data = await loginUser(username, password);
+      const data = await loginUser(email, password);
 
       if (!data?.token) {
         setError("Token invalide.");

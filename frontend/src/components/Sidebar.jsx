@@ -68,7 +68,11 @@ export default function Sidebar({ user, onLogout }) {
           className="w-full flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-gray-50 transition-colors"
         >
           <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-            <span className="text-xs font-bold">{user.name?.[0]?.toUpperCase()}</span>
+            <img
+              src={user.profile}
+              alt={user.name?.[0]?.toUpperCase()}
+              className="w-9 h-9 rounded-full object-cover"
+            />
           </div>
           <div className="flex-1 min-w-0 text-left">
             <p className="text-sm font-semibold text-gray-900 truncate">{user.name}</p>

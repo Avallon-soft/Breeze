@@ -86,7 +86,7 @@ export default function ExplorePage() {
     ? {
         name: profile.username || "Utilisateur",
         tag: profile.username?.toLowerCase().replace(/\s+/g, "_") || "user",
-        profile: "https://i.pravatar.cc/100?img=12",
+        profile: profile?.avatar ? profile?.avatar : "https://i.pravatar.cc/100?img=12",
         userId: profile.user_id || null,
       }
     : null;
