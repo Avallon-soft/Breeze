@@ -157,6 +157,11 @@ export default function CreatePost({ onPostCreated }) {
   const addImage = useCallback(async (file) => {
     if (!file || !file.type.startsWith("image/")) return;
 
+    if (file.size > 1 * 1024 * 1024) {
+      setError("L'image dépasse la taille maximale de 1 Mo");
+      return;
+    }
+
     const id = safeRandomUUID();
     setImages((prev) => [...prev, { id, url: "", uploading: true }]);
 
@@ -338,6 +343,7 @@ export default function CreatePost({ onPostCreated }) {
                 if (f) addImage(f);
                 e.target.value = "";
               }}
+              style={{ display: "none" }}
             />
 
             <div className="w-px h-4 bg-gray-200" />
