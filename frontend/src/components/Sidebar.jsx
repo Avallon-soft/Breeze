@@ -26,11 +26,11 @@ export default function Sidebar({ user, onLogout }) {
   ];
 
   return (
-    <aside className="w-60 h-screen flex-shrink-0 flex flex-col border-r border-gray-100 bg-white px-3 py-6">
-      <div className="flex items-center gap-2 px-3 mb-8">
-        <Wind size={20} className="text-green-500" />
-        <span className="text-xl font-bold tracking-tight">Breeze</span>
-      </div>
+    <aside className="w-60 h-screen flex-shrink-0 flex flex-col border-r border-gray-100 bg-white px-3 py-6 hidden min-[501px]:flex">
+        <div className="flex items-center gap-2 px-3 mb-8">
+            <Wind size={20} className="text-green-500" />
+            <span className="text-xl font-bold tracking-tight">Breeze</span>
+        </div>
 
       <nav className="flex flex-col gap-0.5 flex-1">
         {navItems.map(({ href, label, icon: Icon, badge }) => {
