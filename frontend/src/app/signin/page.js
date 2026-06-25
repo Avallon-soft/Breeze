@@ -42,7 +42,7 @@ export default function SignIn() {
               <div className="mt-12 space-y-6">
                 <div>
                   <label className="text-sm font-semibold text-gray-700 block mb-2">
-                    Email de l'utilisateur
+                    Email
                   </label>
                   <div className="h-14 rounded-2xl border border-gray-200 flex items-center px-4">
                     <User size={18} className="text-gray-400" />
