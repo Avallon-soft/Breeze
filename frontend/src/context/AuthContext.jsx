@@ -34,11 +34,11 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  const login = async (username, password) => {
+  const login = async (email, password) => {
     try {
       setError(null);
 
-      const data = await loginUser(username, password);
+      const data = await loginUser(email, password);
 
       if (!data?.token) {
         setError("Token invalide.");
@@ -50,7 +50,7 @@ export function AuthProvider({ children }) {
 
       // On récupère l'utilisateur juste après le login
       const result = await userService.getProfile();
-      if (result?.data?.profile) setUser(result.data.profile);
+      if (result) setUser(result);
 
       return true;
     } catch (err) {

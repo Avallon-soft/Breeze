@@ -20,11 +20,12 @@ export default function RightPanel() {
 
   return (
     <aside
-      className="w-80 h-screen flex-shrink-0 overflow-y-auto flex flex-col gap-4 px-4 py-6 [&::-webkit-scrollbar]:hidden"
+      className="w-80 h-screen flex-shrink-0 overflow-y-auto flex flex-col gap-4 px-4 py-6
+      [&::-webkit-scrollbar]:hidden"
       style={{ scrollbarWidth: "none" }}
     >
       {/* MON ESPACE */}
-      <div className="bg-white border border-gray-100 rounded-xl p-4">
+      <div className="bg-white border border-gray-100 rounded-xl p-4 cursor-pointer">
         <h3 className="text-sm font-semibold text-gray-900 mb-3">
           Mon espace
         </h3>
@@ -39,9 +40,6 @@ export default function RightPanel() {
           <div>
             <p className="font-semibold text-sm text-gray-900">
               {profile.username}
-            </p>
-            <p className="text-xs text-gray-400">
-              @{profile.username?.toLowerCase()}
             </p>
           </div>
         </div>
