@@ -21,7 +21,7 @@ export default function RightPanel() {
   return (
       <aside
         className="w-80 h-screen flex-shrink-0 overflow-y-auto flex-col gap-4 px-4 py-6
-        [&::-webkit-scrollbar]:hidden hidden min-[821px]:flex"
+        [&::-webkit-scrollbar]:hidden hidden min-[1001px]:flex"
         style={{ scrollbarWidth: "none" }}
       >
       {/* MON ESPACE */}

@@ -11,6 +11,8 @@ import feedService from "@/core/services/feed.service";
 import meService from "@/core/services/me.service";
 import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import {Search} from "lucide-react";
 
 export default function Home() {
   const router = useRouter();
@@ -61,6 +63,7 @@ export default function Home() {
     userId: profile.user_id || null,
   } : null;
 
+  console.log(profile);
 
   if (loading) {
     return (
@@ -74,12 +77,38 @@ export default function Home() {
 
   return (
     <ProtectedRoute>
-      <div className="flex h-screen overflow-hidden bg-gray-50">
+      <div className="flex h-screen overflow-hidden bg-gray-50 relative">
         {sidebarUser && <Sidebar user={sidebarUser} onLogout={handleLogout} />}
 
         <main className="flex-1 h-screen overflow-y-auto border-x border-gray-100">
+
+          <Link
+              href="/explore"
+              className="hidden max-[501px]:flex absolute bottom-6 left-6
+                w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors items-center justify-center flex-shrink-0"
+          >
+            <Search size={18} className="text-white" />
+          </Link>
+
           <div className="max-w-4xl mx-auto px-4 py-6 flex flex-col gap-6">
-            <h1 className="text-2xl font-semibold text-gray-900">Accueil</h1>
+            <div className="flex flex-row justify-between">
+              <h1 className="text-2xl font-semibold text-gray-900">Accueil</h1>
+              {profile && (
+                  <Link
+                      className={"hidden max-[501px]:flex"}
+                      href={`/profile/${profile.user_id}`}>
+                    <img
+                        src={profile.avatar || undefined}
+                        alt={profile.username}
+                        className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                        onError={() => {
+                          window.location.href = "/signin";
+                        }}
+                        onClick={(event) => {}}
+                    />
+                  </Link>
+              )}
+            </div>
             {profile && <CreatePost user={sidebarUser} onPostCreated={handlePostCreated} />}
             <p className="text-sm text-gray-400 mt-0.5">
               Des breezes qui circulent en ce moment

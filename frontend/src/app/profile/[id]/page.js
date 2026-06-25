@@ -12,7 +12,8 @@ import { formatNumber } from "@/lib/utils";
 import { useParams } from "next/navigation";
 import followService from "@/core/services/follow.service";
 import meService from "@/core/services/me.service";
-import { Pencil, Camera, Check, X, Loader2 } from "lucide-react";
+import { Pencil, Camera, Check, X, Loader2, Search, Home } from "lucide-react";
+import Link from "next/link";
 
 const PICTRS_BASE = process.env.NEXT_PUBLIC_IMAGE_BASE + "/image/original/";
 
@@ -268,6 +269,23 @@ export default function ProfilePage() {
         <Sidebar user={userForSidebar} onLogout={handleLogout} />
 
         <main className="flex-1 overflow-y-auto">
+
+          <Link
+              href="/explore"
+              className="hidden max-[501px]:flex absolute bottom-6 left-6
+                w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors items-center justify-center flex-shrink-0"
+          >
+            <Search size={18} className="text-white" />
+          </Link>
+
+          <Link
+              href="/"
+              className="hidden max-[501px]:flex absolute bottom-6 right-6
+                w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors items-center justify-center flex-shrink-0"
+          >
+            <Home size={18} className="text-white" />
+          </Link>
+
           <div className="max-w-5xl mx-auto pb-20">
 
             {isOwnProfile ? (
