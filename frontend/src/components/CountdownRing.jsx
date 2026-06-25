@@ -12,7 +12,7 @@ export default function CountdownRing({
 
   return (
     <div
-      className={`relative flex-shrink-0 ${className}`}
+      className={`hidden min-[821px]:flex relative flex-shrink-0 ${className}`}
       style={{ width: size, height: size }}
     >
       <svg

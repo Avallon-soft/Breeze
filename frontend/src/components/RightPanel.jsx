@@ -19,11 +19,11 @@ export default function RightPanel() {
   if (!profile || !stats) return null;
 
   return (
-    <aside
-      className="w-80 h-screen flex-shrink-0 overflow-y-auto flex flex-col gap-4 px-4 py-6
-      [&::-webkit-scrollbar]:hidden"
-      style={{ scrollbarWidth: "none" }}
-    >
+      <aside
+        className="w-80 h-screen flex-shrink-0 overflow-y-auto flex-col gap-4 px-4 py-6
+        [&::-webkit-scrollbar]:hidden hidden min-[821px]:flex"
+        style={{ scrollbarWidth: "none" }}
+      >
       {/* MON ESPACE */}
       <div className="bg-white border border-gray-100 rounded-xl p-4 cursor-pointer">
         <h3 className="text-sm font-semibold text-gray-900 mb-3">
