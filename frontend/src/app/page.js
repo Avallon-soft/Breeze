@@ -54,7 +54,7 @@ export default function Home() {
   const sidebarUser = profile ? {
     name: profile.username || "Utilisateur",
     tag: profile.username?.toLowerCase().replace(/\s+/g, "_") || "user",
-    profile: "https://i.pravatar.cc/100?img=12",
+    profile: profile?.avatar ? profile?.avatar : "https://i.pravatar.cc/100?img=12",
     subscriptions: 0,
     subscribers: 0,
     posts: 0,
