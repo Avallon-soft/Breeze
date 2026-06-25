@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Search, X } from "lucide-react";
+import { Search, X, Home } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 import PostCard from "@/components/PostCard";
 import RightPanel from "@/components/RightPanel";
@@ -11,6 +11,7 @@ import postService from "@/core/services/post.service";
 import meService from "@/core/services/me.service";
 import { useAuth } from "@/context/AuthContext";
 import userService from "@/core/services/user.service";
+import Link from "next/link";
 
 export default function ExplorePage() {
   const router = useRouter();
@@ -103,13 +104,39 @@ export default function ExplorePage() {
 
   return (
     <ProtectedRoute>
-      <div className="flex h-screen overflow-hidden bg-gray-50">
+      <div className="flex h-screen overflow-hidden bg-gray-50 relative">
         {sidebarUser && <Sidebar user={sidebarUser} onLogout={handleLogout} />}
 
         <main className="flex-1 h-screen overflow-y-auto border-x border-gray-100">
+
+          <Link
+              href="/"
+              className="hidden max-[501px]:flex absolute bottom-6 left-6
+                w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors items-center justify-center flex-shrink-0"
+          >
+            <Home size={18} className="text-white" />
+          </Link>
+
           <div className="max-w-4xl mx-auto px-4 py-6 flex flex-col gap-6">
 
-            <h1 className="text-2xl font-semibold text-gray-900">Explorer</h1>
+            <div className="flex flex-row justify-between">
+              <h1 className="text-2xl font-semibold text-gray-900">Explorer</h1>
+              {profile && (
+                  <Link
+                      className={"hidden max-[501px]:flex"}
+                      href={`/profile/${profile.user_id}`}>
+                    <img
+                        src={profile.avatar || undefined}
+                        alt={profile.username}
+                        className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                        onError={() => {
+                          window.location.href = "/signin";
+                        }}
+                        onClick={(event) => {}}
+                    />
+                  </Link>
+              )}
+            </div>
 
             {/* Barre de recherche avec dropdown */}
             <div className="relative">
