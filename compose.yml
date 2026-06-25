@@ -47,6 +47,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: authdb
       SOFTWARE_SERVICE_SYNC_URL: http://nginx/api/internal/users/sync
+      CORS_ORIGIN: http://158.178.200.73:3001
     depends_on:
       - auth-postgres
     networks:
