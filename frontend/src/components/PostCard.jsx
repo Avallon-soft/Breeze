@@ -291,19 +291,6 @@ export default function PostCard({ post, disableNavigation = false, onDelete }) 
             <MessageCircle size={15} />
             {formatNumber(commentCount)}
           </button>
-          <button
-            onClick={(e) => e.stopPropagation()}
-            className="flex items-center gap-1.5 text-base text-gray-400 hover:text-green-500 transition-colors"
-          >
-            <Repeat2 size={15} />
-            {formatNumber(getCountValue(post.repostsCount ?? post.reposts))}
-          </button>
-          <button
-            onClick={(e) => e.stopPropagation()}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <Send size={15} />
-          </button>
         </div>
       </div>
 
